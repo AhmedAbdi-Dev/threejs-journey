@@ -11,8 +11,9 @@ const scene = new THREE.Scene()
  */
 
 const group = new THREE.Group()
-group.position.y = 1
-group.scale.y= 2
+group.position.y = 2.5
+group.position.z = -2
+group.scale.y= 0.5
 scene.add(group) 
 
 const cubb1 = new THREE.Mesh(
@@ -41,9 +42,89 @@ group.add(cube3)
 
 
 
+
+// GROUP 2
+
+
+const group2 = new THREE.Group()
+group2.position.y = 0
+group2.position.z = -2
+group.scale.y= 0.5
+
+scene.add(group2)
+
+
+const cube4 = new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: "yellow"})
+)
+
+cube4.position.set(1,0,0)
+group2.add(cube4)
+
+const cube5 = new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: "purple"})
+)
+
+cube5.position.set(3,0,0)
+group2.add(cube5)
+
+const cube6 = new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: "teal"})
+)
+
+cube6.position.set(-1,0,0)
+group2.add(cube6)
+
+
+const cube7 = new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: "grey"})
+)
+
+cube7.position.set(-3.25,0,0)
+group2.add(cube7)
+
+
+//GROUP 3
+
+const group3 = new THREE.Group()
+group3.position.y = -2.5
+group3.position.z = -2
+group3.scale.y= 1
+scene.add(group3) 
+
+const cube8 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({ color: "orange" })
+)
+
+group3.add(cube8)
+
+
+const cube9= new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: "gold"})
+)
+cube9.position.set(2,0,0)
+group3.add(cube9)
+
+
+const cube10 = new THREE.Mesh(
+    new THREE.BoxGeometry(1,1,1),
+    new THREE.MeshBasicMaterial({color: "pink"})
+)
+cube10.position.set(-2,0,0)
+group3.add(cube10)
+
+
+
+
 //Axes helper
-const axesHelper = new THREE.AxesHelper()
-scene.add(axesHelper)
+// const axesHelper = new THREE.AxesHelper()
+// scene.add(axesHelper)
 
 /**
  * Sizes
@@ -64,9 +145,6 @@ camera.position.z = 3
 
 
 scene.add(camera)
-
-
-
 
 
 /**
