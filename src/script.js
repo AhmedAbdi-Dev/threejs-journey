@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
-//THIS CODE INCLUDES FULL SCREEN AND RESIZING FUNCTIONALITY 
+//THIS CODE INCLUDES GEOMETRY/ POSITIONARRAY / POSITION ATTRIBUTE 
 
 /**
  * Base
@@ -12,11 +12,41 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+// GEOMETRY ATTRBIUTES and VERTICES
+
+const geometry = new THREE.BufferGeometry()
+
+const count = 500
+
+const positionsArray = new Float32Array(count * 3 *3)
+
+for (let i = 0; i < count * 3 * 3; i++) {
+    positionsArray[i] = (Math.random()-0.5) * 4 
+
+}
+
+const postionsAttribute = new THREE.BufferAttribute(positionsArray, 3)
+
+geometry.setAttribute('position', postionsAttribute)
+
+
+
+const positionAttribute = new THREE.BufferAttribute(positionsArray, 3)
+
+
+geometry.setAttribute('position', positionAttribute)
+
+
+
+
 /**
  * Object
  */
-const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+
+const material = new THREE.MeshBasicMaterial
+({ color: 0xff0000, 
+    wireframe:true
+})
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
 
