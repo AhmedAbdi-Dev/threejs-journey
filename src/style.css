@@ -1,0 +1,22 @@
+
+*{
+    margin: 0;
+    padding: 0
+}
+
+html,
+body
+{
+ overflow: hidden;   
+}
+/* Prevents scrolling past the content into white space */
+
+.webgl
+{
+    position:absolute;
+    top: 0;
+    left: 0;
+    outline: none
+}
+
+/* All you need to make full screen fixed and outline gone */
