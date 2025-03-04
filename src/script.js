@@ -1,5 +1,85 @@
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+ 
 
+// TEXTURES
+
+// const image = new Image()
+// const texture = new THREE.Texture(image)
+// texture.colorSpace = THREE.SRGBColorSpace
+
+// image.onload = () => 
+// {  
+// //update image with the outside declared texture
+// texture.needsUpdate = true
+
+// }
+
+// image.src ='/textures/door/color.jpg'
+
+// //convert image to a TEXTURE
+
+const loadingManager = new THREE.LoadingManager()
+loadingManager.onStart = () => {
+    console.log('loading started')
+}
+
+loadingManager.onLoad= () => {
+    console.log('load')
+}
+
+
+loadingManager.onProgress= () => {
+    console.log('on Progress')
+}
+loadingManager.onError= () => {
+    console.log('on Error')
+}
+
+
+const textureLoader = new THREE.TextureLoader(loadingManager)
+const colorTexture = textureLoader.load('/textures/checkerboard-1024x1024.png')
+colorTexture.colorSpace = THREE.SRGBColorSpace
+const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
+const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
+const heightTexture = textureLoader.load('/textures/door/height.jpg')
+const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
+const normalTexture = textureLoader.load('/textures/door/normal.jpg')
+normalTexture.colorSpace = THREE.SRGBColorSpace
+
+
+//Texture repeating itself
+// colorTexture.repeat.x = 2
+// colorTexture.repeat.y = 3
+// colorTexture.wrapS = THREE.RepeatWrapping
+// colorTexture.wrapT = THREE.RepeatWrapping
+
+// //offseting the texture aka moving it slightly accross the object to the edges
+// colorTexture.offset.x = 0.5
+// colorTexture.offset.y = 0.5
+
+
+// colorTexture.rotation = Math.PI * 0.25
+
+//Rotating texture pivot point in the centre
+// colorTexture.center.x = 0.5
+// colorTexture.center.y = 0.5
+
+
+//mipmapping makes it look sharper
+// colorTexture.minFilter = THREE.NearestFilter
+
+
+//magnification Makes it very SHARP
+//using Nearest filter better for performance 
+
+colorTexture.magFilter = THREE.NearestFilter
+
+// Learnt to load different textures using loading manager
+
+/**
+ * Base
+ */
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
@@ -9,65 +89,48 @@ const scene = new THREE.Scene()
 /**
  * Object
  */
-
-const group = new THREE.Group()
-group.position.y = 1
-group.scale.y= 2
-scene.add(group) 
-
-const cubb1 = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial({ color: 0xff0000 })
-)
-
-group.add(cubb1)
-
-
-const cube2= new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
-    new THREE.MeshBasicMaterial({color: "blue"})
-)
-cube2.position.set(2,0,0)
-group.add(cube2)
-
-
-
-const cube3 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
-    new THREE.MeshBasicMaterial({color: "green"})
-)
-cube3.position.set(-2,0,0)
-group.add(cube3)
-
-
-
-//Axes helper
-const axesHelper = new THREE.AxesHelper()
-scene.add(axesHelper)
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+// console.log(geometry.attributes.uv)
+const material = new THREE.MeshBasicMaterial({ map: colorTexture })
+const mesh = new THREE.Mesh(geometry, material)
+scene.add(mesh)
 
 /**
  * Sizes
  */
 const sizes = {
-    width: 800,
-    height: 600
+    width: window.innerWidth,
+    height: window.innerHeight
 }
 
+window.addEventListener('resize', () =>
+{
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
 
 /**
  * Camera
  */
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-// camera.position.x = 1
-// camera.position.y = 1
-camera.position.z = 3
-
-
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+camera.position.x = 1
+camera.position.y = 1
+camera.position.z = 1
 scene.add(camera)
 
-
-
-
+// Controls
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 
 /**
  * Renderer
@@ -76,4 +139,25 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
-renderer.render(scene, camera)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+/**
+ * Animate
+ */
+const clock = new THREE.Clock()
+
+const tick = () =>
+{
+    const elapsedTime = clock.getElapsedTime()
+
+    // Update controls
+    controls.update()
+
+    // Render
+    renderer.render(scene, camera)
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick)
+}
+
+tick()
