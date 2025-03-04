@@ -1,29 +1,81 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import gsap from 'gsap'
-import GUI from 'lil-gui'
+ 
 
-//LIL GUI
+// TEXTURES
 
-const gui = new GUI({
-    width: 300,
-    title: 'Nice Debug UI',
-    closeFolders: false,
+// const image = new Image()
+// const texture = new THREE.Texture(image)
+// texture.colorSpace = THREE.SRGBColorSpace
 
-})
-// gui.close()
-// gui.hide()
+// image.onload = () => 
+// {  
+// //update image with the outside declared texture
+// texture.needsUpdate = true
 
-//TOGGLE GUI 
-window.addEventListener('keydown', (event) => {
-    if  (event.key === 'h') {
-        gui.show(gui._hidden)
+// }
+
+// image.src ='/textures/door/color.jpg'
+
+// //convert image to a TEXTURE
+
+const loadingManager = new THREE.LoadingManager()
+loadingManager.onStart = () => {
+    console.log('loading started')
 }
-})
 
-
-const debugObject ={
+loadingManager.onLoad= () => {
+    console.log('load')
 }
+
+
+loadingManager.onProgress= () => {
+    console.log('on Progress')
+}
+loadingManager.onError= () => {
+    console.log('on Error')
+}
+
+
+const textureLoader = new THREE.TextureLoader(loadingManager)
+const colorTexture = textureLoader.load('/textures/checkerboard-1024x1024.png')
+colorTexture.colorSpace = THREE.SRGBColorSpace
+const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
+const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
+const heightTexture = textureLoader.load('/textures/door/height.jpg')
+const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
+const normalTexture = textureLoader.load('/textures/door/normal.jpg')
+normalTexture.colorSpace = THREE.SRGBColorSpace
+
+
+//Texture repeating itself
+// colorTexture.repeat.x = 2
+// colorTexture.repeat.y = 3
+// colorTexture.wrapS = THREE.RepeatWrapping
+// colorTexture.wrapT = THREE.RepeatWrapping
+
+// //offseting the texture aka moving it slightly accross the object to the edges
+// colorTexture.offset.x = 0.5
+// colorTexture.offset.y = 0.5
+
+
+// colorTexture.rotation = Math.PI * 0.25
+
+//Rotating texture pivot point in the centre
+// colorTexture.center.x = 0.5
+// colorTexture.center.y = 0.5
+
+
+//mipmapping makes it look sharper
+// colorTexture.minFilter = THREE.NearestFilter
+
+
+//magnification Makes it very SHARP
+//using Nearest filter better for performance 
+
+colorTexture.magFilter = THREE.NearestFilter
+
+// Learnt to load different textures using loading manager
 
 /**
  * Base
@@ -37,72 +89,11 @@ const scene = new THREE.Scene()
 /**
  * Object
  */
-debugObject.color ='#27b953'
-
-
-const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2)
-const material = new THREE.MeshBasicMaterial({ color: debugObject.color, wireframe: true  })
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+// console.log(geometry.attributes.uv)
+const material = new THREE.MeshBasicMaterial({ map: colorTexture })
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
-
-//FOLDERS
-const cubeTweaks = gui.addFolder('Cube')
-// cubeTweaks.close()
-
-cubeTweaks
-    .add(mesh.position, 'y')
-    .min(-3)
-    .max(3)
-    .step(0.01)
-    .name('elevation')
-
-
-cubeTweaks
-    .add(mesh.position, 'x')
-    .min(-3)
-    .max(3)
-    .step(0.01)
-
-
-cubeTweaks
-    .add(mesh, 'visible')
-
-
-cubeTweaks 
-    .add(material, "wireframe")
-
-cubeTweaks 
-    .addColor(debugObject, "color")
-    .onChange(() => 
-    {
-        material.color.set(debugObject.color)
-
-    }
-)
-
-debugObject.spin = () => { 
-    gsap.to(mesh.rotation, {y: mesh.rotation.y + Math.PI * 2 })
-
-}
-
-cubeTweaks
-    .add(debugObject, "spin")
-
-debugObject.subdivisions = 2
-
-cubeTweaks
-    .add(debugObject, 'subdivisions')
-    .min(1)
-    .max(20)
-    .step(1)
-    .onFinishChange(
-    () => {
-        mesh.geometry.dispose()
-        mesh.geometry= new THREE.BoxGeometry
-        (1, 1, 1, 
-            debugObject.subdivisions, debugObject.subdivisions, debugObject.subdivisions)
-    })
-
 
 /**
  * Sizes
@@ -134,7 +125,7 @@ window.addEventListener('resize', () =>
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 1
 camera.position.y = 1
-camera.position.z = 2
+camera.position.z = 1
 scene.add(camera)
 
 // Controls
