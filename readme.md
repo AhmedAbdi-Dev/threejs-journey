@@ -1,4 +1,8 @@
-# Three.js Journey
+Welcome to my Three.js Journey!
+
+Here I will document my journey from zero to hero creating fun and innovative experiences using Three.js, WebGL and Blender :)
+
+
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
